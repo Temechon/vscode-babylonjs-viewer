@@ -64,6 +64,26 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                     width : 500px;
                     height:500px;
                     display : block;
+                    user-select: none;
+                }
+                .category {
+                    margin-top:10px;
+                    width:500px;
+                }
+                .category .title {
+                    border-bottom:2px solid #009BFF;
+                    color:#009BFF;
+                    padding: 10px;
+                    text-transform: uppercase;
+                }
+                .category ul {
+                    margin: 0;
+                    padding: 10px;
+                    list-style: none;
+                }
+                .category ul li {
+                    margin-left: 5px;
+                    padding: 3px;
                 }
 				</style>
                 
@@ -71,6 +91,12 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                 </head>
 				<body>
 					<canvas id='render'></canvas>
+					<div class='category'>
+                        <div class='title'>
+                            Meshes
+                        </div>
+                        <ul id='content'></ul>
+                    </div>
 				</body>
                 <script>                
                 var canvas = document.getElementById('render');
@@ -82,6 +108,8 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                         scene.activeCamera.dispose();
                         scene.activeCamera = null;
                     }
+                    
+                    scene.clearColor = new BABYLON.Color4(0,0,0,0);
                     
                     scene.createDefaultCameraOrLight(true);                    
                     scene.activeCamera.attachControl(canvas);
@@ -95,6 +123,13 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                                 scene.materials[i].diffuseTexture = newTexture;  
                             }
                         }
+                    }
+                    
+                    var list = document.querySelector('#content')
+                    for (var m=0; m<scene.meshes.length; m++) {
+                        var li = document.createElement('li');
+                        li.textContent = scene.meshes[m].name;
+                        list.appendChild(li);
                     }
                     
                     engine.runRenderLoop(function(){ 

@@ -20,6 +20,8 @@ File larger than 5MB cannot be seen by extension, and thus will not be displayed
 ## Release Notes
 
 
-### 1.0.0
+### 1.0.1
+Icon and readme updated.
 
+### 1.0.0
 Initial release of this extension.

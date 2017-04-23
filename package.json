@@ -2,7 +2,7 @@
     "name": "babylon-js-viewer",
     "displayName": "Babylon.js file viewer",
     "description": "Display a .babylon file directly in VSCode",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "publisher": "julianchen",
     "engines": {
         "vscode": "^1.11.0"
@@ -49,5 +49,6 @@
         "@types/node": "^6.0.40",
         "@types/mocha": "^2.2.32"
     },
-    "license": "Apache-2.0"
+    "license": "Apache-2.0",
+    "icon": "icon.png"
 }
