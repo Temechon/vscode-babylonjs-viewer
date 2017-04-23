@@ -1,11 +1,15 @@
 {
     "name": "babylon-js-viewer",
-    "displayName": "Babylon.js fiel viewer",
+    "displayName": "Babylon.js file viewer",
     "description": "Display a .babylon file directly in VSCode",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "publisher": "julianchen",
     "engines": {
         "vscode": "^1.11.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Temechon/vscode-babylonjs-viewer.git"
     },
     "categories": [
         "Other"
@@ -13,6 +17,10 @@
     "activationEvents": [
         "onCommand:babylonviewer.open"
     ],
+    "bugs": {
+        "url": "https://github.com/Temechon/vscode-babylonjs-viewer/issues"
+    },
+    "homepage": "https://github.com/Temechon/vscode-babylonjs-viewer/README.md",
     "main": "./out/src/extension",
     "contributes": {
         "commands": [
@@ -40,5 +48,6 @@
         "mocha": "^2.3.3",
         "@types/node": "^6.0.40",
         "@types/mocha": "^2.2.32"
-    }
+    },
+    "license": "Apache-2.0"
 }
