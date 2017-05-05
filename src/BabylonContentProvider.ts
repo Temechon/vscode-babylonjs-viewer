@@ -94,7 +94,7 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
 					<canvas id='render'></canvas>
 					<div class='category'>
                         <div class='title'>
-                            Meshes
+                            Meshes list
                         </div>
                         <ul id='content'></ul>
                     </div>
@@ -126,10 +126,28 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                         }
                     }
                     
+                    var round = function(nb) {
+                        return Math.round(nb * 100) / 100
+                    };
+                    var display = function(vec) {
+                        return 'x:'+round(vec.x)+", y:"+round(vec.y)+", z:"+round(vec.z)
+                    }
+                    
+                    // Display mesh name and position
                     var list = document.querySelector('#content')
                     for (var m=0; m<scene.meshes.length; m++) {
                         var li = document.createElement('li');
                         li.textContent = scene.meshes[m].name;
+                        
+                        var ul = document.createElement('ul');
+                        var li2 = document.createElement('li');
+                        li2.innerHTML = '<b>position: </b>'+ display(scene.meshes[m].position);
+                        ul.appendChild(li2);
+                        var li3 = document.createElement('li');
+                        li3.innerHTML = '<b>rotation: </b>'+ display(scene.meshes[m].rotation);
+                        ul.appendChild(li3);
+                        
+                        li.appendChild(ul);
                         list.appendChild(li);
                     }
                     
