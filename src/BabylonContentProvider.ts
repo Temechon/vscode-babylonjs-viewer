@@ -84,6 +84,7 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                 .category ul li {
                     margin-left: 5px;
                     padding: 3px;
+                    cursor:pointer; 
                 }
 				</style>
                 

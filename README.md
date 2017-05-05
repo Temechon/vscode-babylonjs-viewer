@@ -15,7 +15,7 @@ Use `1` or `2` below:
 
 ## Known Issues
 
-File larger than 5MB cannot be seen by extension, and thus will not be displayed.
+File larger than 5MB cannot be seen by extensions, and thus will not be displayed.
 
 ## Release Notes
 
