@@ -127,6 +127,7 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                     
                     scene.clearColor = new BABYLON.Color4(0,0,0,0);
                     
+                    // Create default arc rotate camera
                     scene.createDefaultCameraOrLight(true);                    
                     scene.activeCamera.attachControl(canvas);
                     
@@ -141,6 +142,7 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                         }
                     }
                     
+                    // Round numbers for display reasons
                     var round = function(nb) {
                         return Math.round(nb * 100) / 100
                     };
@@ -148,6 +150,7 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                         return 'x:'+round(vec.x)+", y:"+round(vec.y)+", z:"+round(vec.z)
                     };
 
+                    // Create a HTML button
                     var createButton = function(text, callback) {
                         let div = document.createElement('div');
                         div.classList.add('button');
