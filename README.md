@@ -20,6 +20,9 @@ File larger than 5MB cannot be seen by extension, and thus will not be displayed
 ## Release Notes
 
 
+### 1.1.0
+Meshes list added. Replaced black clear color with transparent color.
+
 ### 1.0.1
 Icon and readme updated.
 
