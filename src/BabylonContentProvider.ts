@@ -83,8 +83,23 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                 }
                 .category ul li {
                     margin-left: 5px;
-                    padding: 3px;
-                    cursor:pointer; 
+                    padding: 3px; 
+                }
+
+                .button {
+                    display : inline-block;
+                    background-color:#009BFF;
+                    color:white;
+                    padding:5px;
+                    border: 2px solid #00426b;
+                    margin : 0 10px 0 10px;
+                    cursor:pointer;
+                }
+                .button:hover {
+                    background-color:#006eb2;
+                }
+                .button:active {
+                    background-color:#00426b;
                 }
 				</style>
                 
@@ -131,13 +146,31 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                     };
                     var display = function(vec) {
                         return 'x:'+round(vec.x)+", y:"+round(vec.y)+", z:"+round(vec.z)
-                    }
+                    };
+
+                    var createButton = function(text, callback) {
+                        let div = document.createElement('div');
+                        div.classList.add('button');
+                        div.textContent = text;
+                        div.addEventListener('click', callback.bind(div));
+                        return div;
+                    };
                     
                     // Display mesh name and position
                     var list = document.querySelector('#content')
                     for (var m=0; m<scene.meshes.length; m++) {
+                        var mesh = scene.meshes[m];
                         var li = document.createElement('li');
-                        li.textContent = scene.meshes[m].name;
+                        li.textContent = mesh.name;
+                        li.appendChild(createButton('HIDE', function() {
+                            if (mesh.isEnabled()) {
+                                mesh.setEnabled(false);
+                                this.textContent = 'DISPLAY';
+                            } else {
+                                mesh.setEnabled(true);
+                                this.textContent = 'HIDE';
+                            }
+                        }));
                         
                         var ul = document.createElement('ul');
                         var li2 = document.createElement('li');
