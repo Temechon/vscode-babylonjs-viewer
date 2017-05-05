@@ -14,17 +14,33 @@ export function activate(context: vscode.ExtensionContext) {
 
     let registration = vscode.workspace.registerTextDocumentContentProvider('bjs-preview', provider);
 
+    let previewOpen = false;
+
     let open = vscode.commands.registerTextEditorCommand('babylonviewer.open', (te, t) => {
-        if (checkBabylon(vscode.window.activeTextEditor.document)) {
-            return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'Babylon.js Preview').then((success) => {
+        if (checkBabylon(te.document)) {
+            provider.selectedDocument = te.document;
+
+            if (previewOpen) {
                 provider.update(previewUri);
-            }, (reason) => {
-                vscode.window.showErrorMessage(reason);
-            });
+            } else {
+                return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'Babylon.js Preview').then((success) => {
+                    previewOpen = true;
+                }, (reason) => {
+                    vscode.window.showErrorMessage(reason);
+                });
+            }
+
         } else {
             vscode.window.showWarningMessage("This is not a Babylon file");
         }
     });
+
+    // Deactivate the preview update if the closed doc is the preview panel
+    vscode.workspace.onDidCloseTextDocument((e: vscode.TextDocument) => {
+        if (e.uri.toString() === previewUri.toString()) {
+            previewOpen = false;
+        }
+    })
 
     context.subscriptions.push(open);
 }
@@ -32,5 +48,6 @@ export function activate(context: vscode.ExtensionContext) {
 function checkBabylon(document: vscode.TextDocument) {
 
     let isBabylonType = document.fileName.indexOf('babylon') != -1;
+    console.log('is babylon file', isBabylonType);
     return isBabylonType;
 }

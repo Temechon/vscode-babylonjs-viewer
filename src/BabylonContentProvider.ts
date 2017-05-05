@@ -1,4 +1,3 @@
-
 'use strict';
 
 import * as vscode from 'vscode';
@@ -9,6 +8,9 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
     private _context: vscode.ExtensionContext;
 
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
+
+    /** The selected babylon file */
+    public selectedDocument: vscode.TextDocument = null;
 
     constructor(context: vscode.ExtensionContext) {
         this._context = context;
@@ -27,27 +29,30 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
     }
 
     public createBjsPreview() {
-        let editor = vscode.window.activeTextEditor;
+        console.log('document name', this.selectedDocument.fileName);
+        let editor = this.selectedDocument;
         if (!editor) {
             // https://github.com/Microsoft/vscode/issues/3147
             return 'File is larger than 5MB, and it cannot be displayed...';
         }
-        let filename = editor.document.fileName;
+        let filename = editor.fileName;
         if (filename.indexOf('.babylon') === -1) {
             return `It's not a .babylon file.`;
         }
-        return this.snippet(editor.document.getText());
+        return this.snippet();
     }
 
     private getResourcePath(mediaFile): string {
         return this._context.asAbsolutePath(path.join('resources', mediaFile));
     }
 
-    private snippet(datafile: string): string {
+    private snippet(): string {
+        let datafile = this.selectedDocument.getText();
+        console.log('snippet', this.selectedDocument.fileName);
         var mesh = 'data:' + datafile;
 
         // Get folder name to replace textures URLs
-        var filename = vscode.window.activeTextEditor.document.fileName;
+        var filename = this.selectedDocument.fileName;
         var folder = filename.substr(0, filename.lastIndexOf(path.sep) + 1);
         folder = folder.replace(/\\/g, '/'); // replace backslash on windows
 
@@ -62,7 +67,7 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                     margin  : 0;
                     padding : 0;
                     width : 500px;
-                    height:500px;
+                    height: 500px;
                     display : block;
                     user-select: none;
                 }
@@ -71,8 +76,8 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                     width:500px;
                 }
                 .category .title {
-                    border-bottom:2px solid #009BFF;
-                    color:#009BFF;
+                    border-bottom:2px solid #00426b;
+                    color:#00426b;
                     padding: 10px;
                     text-transform: uppercase;
                 }
@@ -84,22 +89,34 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                 .category ul li {
                     margin-left: 5px;
                     padding: 3px; 
+                    color:#333;
+                }
+
+                .category ul li.meshname {
+                    color:darkred;
+                    font-weight:600;
                 }
 
                 .button {
+                    box-sizing:border-box;
                     display : inline-block;
-                    background-color:#009BFF;
-                    color:white;
+                    background-color:white;
+                    color:#00426b;
                     padding:5px;
-                    border: 2px solid #00426b;
+                    border: 1px solid #00426b;
                     margin : 0 10px 0 10px;
                     cursor:pointer;
+                    user-select: none;
+                    font-size:0.9em;
                 }
                 .button:hover {
-                    background-color:#006eb2;
+                    background-color:#00426b;
+                    color:white;
                 }
                 .button:active {
-                    background-color:#00426b;
+                    border: 1px solid #009BFF;
+                    background-color:#009BFF;
+                    color:white;
                 }
 				</style>
                 
@@ -144,7 +161,7 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                     
                     // Round numbers for display reasons
                     var round = function(nb) {
-                        return Math.round(nb * 100) / 100
+                        return Math.round(nb * 100) / 100;
                     };
                     var display = function(vec) {
                         return 'x:'+round(vec.x)+", y:"+round(vec.y)+", z:"+round(vec.z)
@@ -164,8 +181,18 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                     for (var m=0; m<scene.meshes.length; m++) {
                         var mesh = scene.meshes[m];
                         var li = document.createElement('li');
+                        li.classList.add('meshname');
                         li.textContent = mesh.name;
                         li.appendChild(createButton('HIDE', function() {
+                            if (mesh.isEnabled()) {
+                                mesh.setEnabled(false);
+                                this.textContent = 'DISPLAY';
+                            } else {
+                                mesh.setEnabled(true);
+                                this.textContent = 'HIDE';
+                            }
+                        }));
+                        li.appendChild(createButton('WIREFRAME', function() {
                             if (mesh.isEnabled()) {
                                 mesh.setEnabled(false);
                                 this.textContent = 'DISPLAY';
