@@ -6,8 +6,6 @@ This extension adds a preview panel on .babylon file, displaying the file conten
 
 ![File viewer](images/screen1.jpg)
 
-![File viewer](images/screen3.jpg)
-
 ## How to use it
 Use `1` or `2` below:
 1. Open a Babylon.js asset file (ends with `.babylon`). Press <kbd>CTRL+ALT+O</kbd> to open the preview panel.
@@ -19,6 +17,11 @@ File larger than 5MB cannot be seen by extensions, and thus will not be displaye
 
 ## Release Notes
 
+
+### 1.2.0
+Updated for dark themes.
+Added a button to hide/display a specific mesh
+Improve support for 2/3 columns.
 
 ### 1.1.0
 Meshes list added. Replaced black clear color with transparent color.

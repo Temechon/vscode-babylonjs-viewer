@@ -62,6 +62,8 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                 html, body {
                     width : 100%;
                     height:100%;
+                    background-color:#eee;
+                    padding:20px;
                 }
                 #render {
                     margin  : 0;
@@ -70,6 +72,7 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                     height: 500px;
                     display : block;
                     user-select: none;
+                    border : 2px solid #00426b;
                 }
                 .category {
                     margin-top:10px;
@@ -93,8 +96,7 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                 }
 
                 .category ul li.meshname {
-                    color:darkred;
-                    font-weight:600;
+                    color:#E74C3C;
                 }
 
                 .button {
@@ -182,25 +184,18 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                         var mesh = scene.meshes[m];
                         var li = document.createElement('li');
                         li.classList.add('meshname');
-                        li.textContent = mesh.name;
-                        li.appendChild(createButton('HIDE', function() {
-                            if (mesh.isEnabled()) {
-                                mesh.setEnabled(false);
-                                this.textContent = 'DISPLAY';
-                            } else {
-                                mesh.setEnabled(true);
-                                this.textContent = 'HIDE';
-                            }
-                        }));
-                        li.appendChild(createButton('WIREFRAME', function() {
-                            if (mesh.isEnabled()) {
-                                mesh.setEnabled(false);
-                                this.textContent = 'DISPLAY';
-                            } else {
-                                mesh.setEnabled(true);
-                                this.textContent = 'HIDE';
-                            }
-                        }));
+                        li.innerHTML = '<b>'+mesh.name+'</b>';
+                        li.appendChild(function(mmm) {
+                            return createButton('HIDE', function() {
+                                if (mmm.isEnabled()) {
+                                    mmm.setEnabled(false);
+                                    this.textContent = 'DISPLAY';
+                                } else {
+                                    mmm.setEnabled(true);
+                                    this.textContent = 'HIDE';
+                                }
+                            })
+                        }(mesh));
                         
                         var ul = document.createElement('ul');
                         var li2 = document.createElement('li');
