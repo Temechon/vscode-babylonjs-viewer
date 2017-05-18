@@ -68,15 +68,15 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                 #render {
                     margin  : 0;
                     padding : 0;
-                    width : 500px;
-                    height: 500px;
+                    width : 700px;
+                    height: 700px;
                     display : block;
                     user-select: none;
                     border : 2px solid #00426b;
                 }
                 .category {
                     margin-top:10px;
-                    width:500px;
+                    width:700px;
                 }
                 .category .title {
                     border-bottom:2px solid #00426b;
@@ -84,6 +84,11 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                     padding: 10px;
                     text-transform: uppercase;
                 }
+                .category .title .meshesNumber {
+                    text-transform: capitalize;
+                    color:#002e49;
+                }
+                
                 .category ul {
                     margin: 0;
                     padding: 10px;
@@ -97,6 +102,7 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
 
                 .category ul li.meshname {
                     color:#E74C3C;
+                    cursor:pointer;
                 }
 
                 .button {
@@ -128,7 +134,7 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
 					<canvas id='render'></canvas>
 					<div class='category'>
                         <div class='title'>
-                            Meshes list
+                            Meshes list <span id='meshesNumber'></span> 
                         </div>
                         <ul id='content'></ul>
                     </div>
@@ -149,6 +155,9 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                     // Create default arc rotate camera
                     scene.createDefaultCameraOrLight(true);                    
                     scene.activeCamera.attachControl(canvas);
+                    
+                    // Display number of meshes
+                    document.getElementById('meshesNumber').innerHTML = '<b> - Total: '+scene.meshes.length + '</b>';
                     
                     // Rework materials
                     if (scene.materials) {
@@ -178,13 +187,45 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                         return div;
                     };
                     
+                    // Highlight a given mesh
+                    var clone, oldMesh;
+                    var redMat = new BABYLON.StandardMaterial('redMat', scene);
+                    redMat.emissiveColor = BABYLON.Color3.Red();
+                    redMat.diffuseColor = BABYLON.Color3.Red();
+                    redMat.specularColor = BABYLON.Color3.Black();
+
+                    var highlight = function(mesh) {
+                        if (clone) {
+                            clone.dispose();
+                            oldMesh.renderingGroupId = 0;
+                        }
+
+                        clone = mesh.clone();
+                        oldMesh = mesh;
+                        clone.scaling.scaleInPlace(1.05);
+                        clone.renderingGroupId = 1;
+                        mesh.renderingGroupId = 2;
+                        clone.position = BABYLON.Vector3.Zero();
+                        clone.parent = mesh;
+
+                        clone.material = redMat;
+                    };
+                    
                     // Display mesh name and position
                     var list = document.querySelector('#content')
                     for (var m=0; m<scene.meshes.length; m++) {
                         var mesh = scene.meshes[m];
                         var li = document.createElement('li');
                         li.classList.add('meshname');
-                        li.innerHTML = '<b>'+mesh.name+'</b>';
+                        let b = document.createElement('b');
+                        b.textContent = mesh.name;
+                        b.addEventListener('mouseenter', 
+                            function() {
+                                var mmm = mesh;
+                                return highlight.bind(this, mesh);
+                            }(mesh));  
+                        li.appendChild(b);              
+                        
                         li.appendChild(function(mmm) {
                             return createButton('HIDE', function() {
                                 if (mmm.isEnabled()) {
@@ -196,6 +237,21 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                                 }
                             })
                         }(mesh));
+                        li.appendChild(function(mmm) {
+                            return createButton('WIREFRAME', function() {
+                                if (mmm.material && mmm.material.wireframe) {
+                                    mmm.material.wireframe = false;
+                                } else {
+                                    if (mmm.material) {
+                                        mmm.material.wireframe = true;
+                                    } else { 
+                                        var wireframeMat = new BABYLON.StandardMaterial('wireframeMat', scene);
+                                        wireframeMat.wireframe = true;
+                                        mmm.material = wireframeMat;
+                                    }
+                                }
+                            })
+                        }(mesh));
                         
                         var ul = document.createElement('ul');
                         var li2 = document.createElement('li');
@@ -204,6 +260,12 @@ export default class BabylonContentProvider implements vscode.TextDocumentConten
                         var li3 = document.createElement('li');
                         li3.innerHTML = '<b>rotation: </b>'+ display(scene.meshes[m].rotation);
                         ul.appendChild(li3);
+                        var li4 = document.createElement('li');
+                        li4.innerHTML = '<b>vertices: </b>'+ scene.meshes[m].getTotalVertices();
+                        ul.appendChild(li4);
+                        var li5 = document.createElement('li');
+                        li5.innerHTML = '<b>is pickable: </b>'+ scene.meshes[m].isPickable;
+                        ul.appendChild(li5);
                         
                         li.appendChild(ul);
                         list.appendChild(li);

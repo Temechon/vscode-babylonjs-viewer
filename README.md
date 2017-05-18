@@ -17,6 +17,12 @@ File larger than 5MB cannot be seen by extensions, and thus will not be displaye
 
 ## Release Notes
 
+### 1.3.0
+Number of vertices added
+Total number of meshes added
+Display if a mesh is pickable
+When a mesh name is hovered, the mesh is highlighted in the scene
+Added a wireframe button
 
 ### 1.2.0
 Updated for dark themes.
